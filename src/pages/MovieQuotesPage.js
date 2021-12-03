@@ -37,10 +37,10 @@ export const QuoteList = ({quotes}) => {
 
 export const QuoteLogic = ({quote}) => {
 
-    const {data:character} = useTheOneAPI(`/character/${quote.character}`, `character-${quote.character}`)
+    const {data:character, loaded} = useTheOneAPI(`/character/${quote.character}`, `character-${quote.character}`)
 
     return(
-        <Quote character={character.docs[0]} quote={quote} />
+        loaded ? <Quote character={character.docs[0]} quote={quote} /> : null
     )
 
 }
