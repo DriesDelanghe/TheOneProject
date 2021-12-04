@@ -7,6 +7,7 @@ import {useBookCoverAPI} from "../hooks/useBookcoverAPI";
 import {useGoogleBooksAPI} from "../hooks/useGoogleBooksAPI";
 import {CSSTransition, SwitchTransition} from "react-transition-group";
 import {useLocalStorage} from "../hooks/useLocalStorage";
+import {SkeletonLoading} from "../components/SkeletonLoading";
 
 export const BooksPage = () => {
 
@@ -48,8 +49,8 @@ export const BookList = () => {
 
 export const BookComponentLogic = ({book}) => {
 
-    const {cover} = useBookCoverAPI(book.name)
-    const {bookData} = useGoogleBooksAPI(book.name)
+    const {cover, loaded: coverLoaded} = useBookCoverAPI(book.name)
+    const {bookData, loaded: bookDataLoaded} = useGoogleBooksAPI(book.name)
     const {data: chapters} = useTheOneAPI(`/book/${book._id}/chapter`, `${book.name}-chapters`)
 
     const [showChapters, setShowChapters] = useLocalStorage(`${book.name}-show-chapters`, false)
@@ -65,7 +66,9 @@ export const BookComponentLogic = ({book}) => {
                     {showChapters ?
                         <BookChapterCard chapters={chapters.docs} setShowChapters={setShowChapters}/>
                         :
-                        <BookCoverCard book={{...book, cover}} bookData={bookData} setShowChapters={setShowChapters}/>}
+                        <BookCoverCard book={{...book, cover}} bookData={bookData} coverLoaded={coverLoaded}
+                                       bookDataLoaded={bookDataLoaded}
+                                       setShowChapters={setShowChapters}/>}
                 </CSSTransition>
             </SwitchTransition>
     )
@@ -82,18 +85,25 @@ export const BookCard = ({children}) => {
     )
 }
 
-export const BookCoverCard = ({book, bookData, setShowChapters}) => {
+export const BookCoverCard = ({book, bookData, setShowChapters, coverLoaded, bookDataLoaded}) => {
 
     return (
         <BookCard>
             <Col xs={10} md={3} className={"py-3 mx-auto"}>
-                <Image fluid src={book.cover}/>
+                {coverLoaded && book.cover ? <Image fluid src={book.cover}/> :
+                <SkeletonLoading height={"100%"} width={"100%"} /> }
             </Col>
             <Col xs={12} md={9} className={"d-flex justify-content-start gap-3 flex-column pb-3"}>
                 <div>
-                    <h3 className="display-6 fs-4 m-0">
+                    {bookDataLoaded ? <h3 className="display-6 fs-4 m-0">
                         {book.name}
                     </h3>
+                    :
+                    <SkeletonLoading>
+                        <SkeletonLoading width={"80%"}/>
+                        <SkeletonLoading width={'60%'}/>
+                        <SkeletonLoading width={"65%"}/>
+                    </SkeletonLoading>}
                     <p className="text-muted lead fs-6 m-0">{bookData?.authors?.[0]}</p>
                 </div>
                 <div>

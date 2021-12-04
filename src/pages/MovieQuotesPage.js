@@ -9,7 +9,7 @@ import {LoadingAnimation} from "./MovieDetails";
 export const MovieQuotesPages = () => {
 
     const {movieId} = useParams()
-    const {data: quotes, loaded} = useTheOneAPI(`/movie/${movieId}/quote`, `quotes-${movieId}`)
+    const {data: quotes, loaded} = useTheOneAPI(`/movie/${movieId}/quote`, `quotes-${movieId}`, 25)
 
     return (
         <Layout>

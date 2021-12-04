@@ -26,7 +26,7 @@ const useMoviesContext = () => useContext(MoviesContext)
 export const MoviesContextProvider = ({children}) => {
 
     const {data: movies, loaded} = useTheOneAPI("/movie", "movies")
-    const MoviesMemo = useMemo(() => ({movies, loaded}), [movies])
+    const MoviesMemo = useMemo(() => ({movies, loaded}), [movies, loaded])
 
     return (
         <MoviesContext.Provider value={MoviesMemo}>
@@ -37,7 +37,7 @@ export const MoviesContextProvider = ({children}) => {
 
 export const MovieList = () => {
 
-    const {movies, loaded} = useMoviesContext()
+    const {movies} = useMoviesContext()
 
     return (
         <>

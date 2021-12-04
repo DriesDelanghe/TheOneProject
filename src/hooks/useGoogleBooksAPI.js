@@ -19,7 +19,6 @@ export const useGoogleBooksAPI = (bookTitle) => {
             }
             setLoaded(false)
             const baseURL = "https://www.googleapis.com/books/v1/volumes?"
-            console.log("KEY: ", googleAPI.key)
             const query = `q=${modifiedBookTitle.current}&orderBy=relevance&key=` + googleAPI.key
             const response = await fetch(baseURL+query)
             const data = await response.json()

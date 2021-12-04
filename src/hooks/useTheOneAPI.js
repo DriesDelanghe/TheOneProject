@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useLocalStorage} from "./useLocalStorage";
 
 
-export const useTheOneAPI = (url, key) => {
+export const useTheOneAPI = (url, key, limit) => {
 
     const [data, setData] = useLocalStorage(key, {})
     const [loaded, setLoaded] = useState(false)
@@ -23,7 +23,7 @@ export const useTheOneAPI = (url, key) => {
                 }
             }
             console.log("fetching response")
-            const response = await  fetch(`https://the-one-api.dev/v2${url}?limit=25`, options)
+            const response = await  fetch(`https://the-one-api.dev/v2${url}${limit ? `?limit=${limit}` : ''}`, options)
             const responseData = await response.json()
             console.log("response data: ", responseData)
             setData(responseData)

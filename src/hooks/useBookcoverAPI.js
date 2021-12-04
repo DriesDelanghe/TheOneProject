@@ -17,7 +17,11 @@ export const useBookCoverAPI = (bookTitle) => {
 
             const baseURL = "https://bookcoverapi.herokuapp.com/getBookCover"
             const options = {
-                method: 'GET'
+                method: 'GET',
+                mode: 'no-cors',
+                headers: {
+                'access-control-allow-origin': "*"
+                }
             }
             console.log(`${baseURL}?bookTitle=${modifiedBookTitle.current}`)
             const response = await fetch(`${baseURL}?bookTitle=${modifiedBookTitle.current}`, options)

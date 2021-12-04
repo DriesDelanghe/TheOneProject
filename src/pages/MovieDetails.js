@@ -45,7 +45,7 @@ export const MovieDetailsComponent = ({movie}) => {
                         <footer className="blockquote-footer"><cite title="Movie Name">{movie.title}</cite></footer>
                     </blockquote>
                     <p className="lead mt-4" style={{maxWidth: "600px"}}>{movie.overview}</p>
-                    {movie.homepage && <a href={movie.homepage} target={"_blank"}>Go to website</a>}
+                    {movie.homepage && <a href={movie.homepage} target={"_blank"} rel="noreferrer">Go to website</a>}
                 </Col>
                 <Col xs={{span: 10, order: 'first'}} md={{span: 4, order: 'last'}} className={"mx-auto my-3"}>
                         <TMBDImage imageURL={movie.poster_path}/>
