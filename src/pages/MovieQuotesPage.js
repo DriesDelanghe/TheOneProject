@@ -1,20 +1,23 @@
 import {useTheOneAPI} from "../hooks/useTheOneAPI";
 import {useParams} from "react-router-dom";
 import {Container} from "react-bootstrap";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Layout} from "../components/Layout";
 import {LoadingAnimation} from "./MovieDetails";
+import {BookCard} from "./Books";
+import {FaChevronLeft, FaChevronRight} from "react-icons/all";
 
 
 export const MovieQuotesPages = () => {
 
     const {movieId} = useParams()
-    const {data: quotes, loaded} = useTheOneAPI(`/movie/${movieId}/quote`, `quotes-${movieId}`, 25)
+    const {data: quotes, loaded} = useTheOneAPI(`/movie/${movieId}/quote`, `quotes-${movieId}`, 100)
+
 
     return (
         <Layout>
             {loaded ?
-                <QuoteList quotes={quotes.docs} />
+                <QuoteList quotes={quotes.docs}/>
                 :
                 <LoadingAnimation/>
             }
@@ -25,7 +28,7 @@ export const MovieQuotesPages = () => {
 }
 
 export const QuoteList = ({quotes}) => {
-    return(
+    return (
         quotes?.[0] ?
             quotes.map((quote) => <QuoteLogic quote={quote}/>)
             :
@@ -37,10 +40,10 @@ export const QuoteList = ({quotes}) => {
 
 export const QuoteLogic = ({quote}) => {
 
-    const {data:character, loaded} = useTheOneAPI(`/character/${quote.character}`, `character-${quote.character}`)
+    const {data: character, loaded} = useTheOneAPI(`/character/${quote.character}`, `character-${quote.character}`)
 
-    return(
-        loaded ? <Quote character={character.docs[0]} quote={quote} /> : null
+    return (
+        loaded ? <Quote character={character.docs[0]} quote={quote}/> : null
     )
 
 }
@@ -48,9 +51,11 @@ export const QuoteLogic = ({quote}) => {
 export const Quote = ({quote, character}) => {
 
     return (
-        <blockquote className="blockquote my-3">
-            <p className="mb-3">{quote.dialog}</p>
-            <footer className="blockquote-footer"><cite title="Movie Name">{character.name}</cite></footer>
-        </blockquote>
+        <BookCard>
+            <blockquote className="blockquote">
+                <p className="mb-3">"{quote.dialog}"</p>
+                <footer className="blockquote-footer"><cite title="Movie Name">{character.name}</cite></footer>
+            </blockquote>
+        </BookCard>
     )
 }

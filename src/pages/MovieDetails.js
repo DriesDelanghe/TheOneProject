@@ -4,6 +4,7 @@ import {Col, Container, Row, Spinner} from "react-bootstrap";
 import {TMBDImage} from "../components/TMDBImage";
 import * as React from "react";
 import {Layout} from "../components/Layout";
+import {useTheOneAPI} from "../hooks/useTheOneAPI";
 
 
 export const MovieCastPage = () => {
@@ -48,12 +49,13 @@ export const MovieDetailsComponent = ({movie}) => {
                     {movie.homepage && <a href={movie.homepage} target={"_blank"} rel="noreferrer">Go to website</a>}
                 </Col>
                 <Col xs={{span: 10, order: 'first'}} md={{span: 4, order: 'last'}} className={"mx-auto my-3"}>
-                        <TMBDImage imageURL={movie.poster_path}/>
+                    <TMBDImage imageURL={movie.poster_path}/>
                 </Col>
             </Row>
             <Row className={'mt-5 align-items-end justify-content-center gap-3'}>
                 <h3 className="display-6 fs-4 fw-normal">Production companies:</h3>
-                {movie.production_companies.map((productionCompany) => <ProductionCompanyComponent key={productionCompany.id} productionCompany={productionCompany} />)}
+                {movie.production_companies.map((productionCompany) => <ProductionCompanyComponent
+                    key={productionCompany.id} productionCompany={productionCompany}/>)}
             </Row>
         </Container>
     )
@@ -75,20 +77,31 @@ export const CastList = ({cast}) => {
             <Container>
                 <h3 className="display-6 fs-2">Cast:</h3>
             </Container>
-            {cast.map((castMember) => <CastMember castMember={castMember}/>)}
+            {cast.map((castMember) => <CastMemberLogic castMember={castMember}/>)}
         </div>
     )
 }
 
-export const CastMember = ({castMember}) => {
+export const CastMemberLogic = ({castMember}) => {
+
+    const {data, loaded} = useTheOneAPI("/character?name=" + castMember.character, `the-oni-api-character-${castMember.character}`)
 
     return (
-        <Col xs={10} md={5} className={' border rounded-2 mx-auto'}>
+        <CastMember castMember={castMember}>
+            {loaded ? <TheOneAPICharacterComponent theOneAPIData={data.docs[0]}/> : <LoadingAnimation/>}
+        </CastMember>
+    )
+}
+
+export const CastMember = ({castMember, children}) => {
+
+    return (
+        <Col xs={10} className={' border rounded-2 mx-auto'}>
             <Row className={'m-0 p-0'}>
-                <Col xs={10} md={6} className={"p-3 mx-auto"}>
+                <Col xs={10} md={4} className={"p-3 mx-auto"}>
                     <TMBDImage imageURL={castMember.profile_path}/>
                 </Col>
-                <Col xs={12} md={6} className={"d-flex justify-content-start gap-3 flex-column p-3 mt-3"}>
+                <Col xs={12} md={8} className={"d-flex justify-content-start gap-3 flex-column p-3 mt-3"}>
                     <div>
                         <h3 className="display-6 fs-4 m-0">
                             {castMember.character}
@@ -96,10 +109,46 @@ export const CastMember = ({castMember}) => {
                         <p className="text-muted lead fs-6 m-0">{castMember.original_name}</p>
                     </div>
                     <div>
-                        <p>{}</p>
+                        {children}
                     </div>
                 </Col>
             </Row>
         </Col>
+    )
+}
+
+export const TheOneAPICharacterComponent = ({theOneAPIData}) => {
+
+    return (
+        <div>
+            {theOneAPIData &&
+            <>
+                <h3 className="display-6 fs-5">Character Info</h3>
+                <h3 className="display-6 fs-6">Life:</h3>
+                <ul>
+                        <CharacterInfo data={theOneAPIData.birth} dataName={"Birth"}/>
+                        <CharacterInfo data={theOneAPIData.death} dataName={"Death"}/>
+                        <CharacterInfo data={theOneAPIData.realm} dataName={"Realm"}/>
+                        <CharacterInfo data={theOneAPIData.gender} dataName={"Gender"}/>
+                        <CharacterInfo data={theOneAPIData.spouse} dataName={"Spouse"}/>
+                </ul>
+                <h3 className="display-6 fs-6">Characteristics:</h3>
+                <ul>
+                    <CharacterInfo data={theOneAPIData.hair} dataName={"Hair"} />
+                    <CharacterInfo data={theOneAPIData.height} dataName={"Height"} />
+                    <CharacterInfo data={theOneAPIData.race} dataName={"Race"} />
+                </ul>
+            </>}
+        </div>
+    )
+}
+
+export const CharacterInfo = ({data, dataName}) => {
+    return (
+        data ?
+            <li>
+                <p className="lead fs-6">{dataName} : {data}</p>
+            </li>
+            : null
     )
 }

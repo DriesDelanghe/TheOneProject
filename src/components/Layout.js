@@ -5,7 +5,7 @@ export const Layout = ({children}) => {
     return (
         <>
             <Header/>
-            <Container className={"shadow-lg bg-light minh-100"}>
+            <Container className={"shadow-lg bg-light py-3"}>
             {children}
             </Container>
         </>
